@@ -27,7 +27,63 @@ Some prompts to answer:
 - How does your `Recommender` compute a score for each song
 - How do you choose which songs to recommend
 
-You can include a simple diagram or bullet list if helpful.
+My implementation of the Music Recommender is a content-based recommendation system that uses song attributes to select the best songs that fit the user's preferences. the `UserProfile` will contain teh attributes:
+ - favorite_genre
+ - favorite_mood
+ - target_energy
+ - likes_acoustic
+ 
+The scoring system uses these attributes to score:
+- genre: category of song composition
+- mood: category of emotion evoked by song
+- energy: perceived emotional drive/intensity
+- tempo or bpm: speed of song
+- valence: positivity of a song
+- danceability: suitablity of a song to be danced to
+- acousticness: measure of how much unplugged, natural sound is used
+The Scoring algorithm calculates a genre, mood, energy, and acoustic score and multiplied by fixed weights based on how I think songs should be scored.
+
+```python
+score = 0.40 * genre_score
+      + 0.25 * mood_score
+      + 0.25 * energy_score
+      + 0.10 * acoustic_score
+```
+
+The genre score is a binary match, meaning that it will only be considered if it matches the user's preferred genre.
+
+```python
+genre_score = 1 if song.genre == user.favorite_genre else 0
+```
+
+The mood score is a composite feature based on a binary mood match and a valence similarity sub-feature. The mood-valence mapping is also a fixed number based on what I intuitively think it correlates to(higher valence = happier mood)
+
+```python
+MOOD_VALENCE = {
+    "happy": 0.80, "chill": 0.55, "intense": 0.50,
+    "relaxed": 0.70, "focused": 0.55, "moody": 0.35
+}
+mood_match       = 1 if song.mood == user.favorite_mood else 0
+valence_target   = MOOD_VALENCE.get(user.favorite_mood, 0.5)
+valence_sim      = 1 - abs(song.valence - valence_target)
+mood_score       = 0.7 * mood_match + 0.3 * valence_sim
+energy_score — composite
+```
+
+The energy score is based on energy similarity, which is a composite feature utilizing a normalized tempo/bpm and song danceability metrics. To keep it simple, the tempo/bpm was normalized by subtracting the lowest bpm in the dataset (60 bpm) from the song's bpm, and dividing it by the difference between the highest (152 bpm) and lowest bpm. 
+
+```python
+norm_tempo       = (song.tempo_bpm - 60) / 92   # normalizes to [0, 1] for dataset range 60-152
+composite_energy = 0.5 * song.energy + 0.3 * norm_tempo + 0.2 * song.danceability
+energy_score     = 1 - abs(composite_energy - user.target_energy)
+```
+
+The acoustic score is based on binary range check that reads a boolean that determines whether the song fits the acoustic preference.
+
+```python
+acoustic_score = 1 if (song.acousticness >= 0.5) == user.likes_acoustic or else 0
+```
+
 
 ---
 
