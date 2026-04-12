@@ -9,12 +9,14 @@ You will implement the functions in recommender.py:
 - recommend_songs
 """
 
-from recommender import load_songs, recommend_songs
+from src.recommender import load_songs, recommend_songs
 
 
 def main() -> None:
-    songs = load_songs("data/songs.csv") 
-
+    #Load songs from CSV
+    songs = load_songs("data/songs.csv")
+    print("Loaded songs: " + str(len(songs)))
+ 
     # Taste profile
     user_prefs = {"genre": "pop", "mood": "relaxed", "energy": 0.71, "likes_acoustic": True}
 
