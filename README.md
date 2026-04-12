@@ -32,7 +32,9 @@ My implementation of the Music Recommender is a content-based recommendation sys
  - favorite_mood
  - target_energy
  - likes_acoustic
- 
+
+### Algorithm Recipe
+
 The scoring system uses these attributes to score:
 - genre: category of song composition
 - mood: category of emotion evoked by song
@@ -84,6 +86,19 @@ The acoustic score is based on binary range check that reads a boolean that dete
 acoustic_score = 1 if (song.acousticness >= 0.5) == user.likes_acoustic or else 0
 ```
 
+### The Plan
+
+![Data Flow in Music Recommender](MusicRecommender_DataFlow.png)
+
+
+**Input:** `songs.csv` is loaded into a list of song dictionaries. A `UserProfile` provides the target preferences: `favorite_genre`, `favorite_mood`, `target_energy`, and `likes_acoustic`.
+
+**Process:** Each song is scored independently against the user profile using four weighted features. Genre and acousticness use binary rules (match or no match). Mood is a composite of a binary mood match and a valence similarity sub-score. Energy is a composite of the song's raw energy, normalized tempo, and danceability — all blended into a single proximity score against `target_energy`.
+
+**Output:** All songs are sorted descending by their final score and the top `k` are returned, each with a score and a plain-language explanation.
+
+### Potential Biases
+The Scoring Rule, puts a heavy bias toward genre since its people don't often listen outside of their preferred genre of music. However, if the listener listens to a lot of different music and  preferences, the recommendation system would not be robust enough to take those many preferences into consideration. The same goes into mood as well, but with slightly less effect.
 
 ---
 

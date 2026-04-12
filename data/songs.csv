@@ -9,3 +9,13 @@ id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness
 8,Night Drive Loop,Neon Echo,synthwave,moody,0.75,110,0.49,0.73,0.22
 9,Focus Flow,LoRoom,lofi,focused,0.40,80,0.59,0.60,0.78
 10,Rooftop Lights,Indigo Parade,indie pop,happy,0.76,124,0.81,0.82,0.35
+11,Golden Hour Drive,Indigo Parade,indie pop,happy,0.78,120,0.83,0.80,0.30
+12,Rain on Glass,Paper Lanterns,ambient,chill,0.25,62,0.62,0.38,0.94
+13,Thunder Circuit,Voltline,rock,intense,0.89,148,0.44,0.70,0.08
+14,Late Night Keys,Slow Stereo,jazz,relaxed,0.40,85,0.68,0.50,0.91
+15,Neon Freeway,Neon Echo,synthwave,moody,0.80,115,0.45,0.76,0.15
+16,Study Drift,LoRoom,lofi,focused,0.38,76,0.57,0.55,0.80
+17,Confetti Pop,Max Pulse,pop,happy,0.85,128,0.88,0.85,0.07
+18,Velvet Underground,Orbit Bloom,ambient,chill,0.30,62,0.60,0.42,0.88
+19,Iron Tempo,Voltline,rock,intense,0.94,150,0.50,0.68,0.06
+20,Sunday Slow,Slow Stereo,jazz,relaxed,0.35,88,0.73,0.48,0.93
