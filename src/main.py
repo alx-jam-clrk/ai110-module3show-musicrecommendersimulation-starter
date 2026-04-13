@@ -19,8 +19,11 @@ def main() -> None:
  
     # Taste profile
     user_prefs = {"genre": "pop", "mood": "relaxed", "energy": 0.71, "likes_acoustic": True}
-
-    recommendations = recommend_songs(user_prefs, songs, k=5)
+    energy_paradox = {"genre": "lofi", "mood": "chill", "energy": 0.0, "likes_acoustic": True}
+    genre_intruder = {"genre": "synthwave", "mood": "chill", "energy": 0.40, "likes_acoustic": True}
+    valence_trap = {"genre": "jazz", "mood": "happy", "energy": 0.40, "likes_acoustic": True}
+    
+    recommendations = recommend_songs(valence_trap, songs, k=5)
 
     print("\nTop recommendations:\n")
     for rec in recommendations:

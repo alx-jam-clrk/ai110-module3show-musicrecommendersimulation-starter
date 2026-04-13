@@ -130,6 +130,7 @@ def score_song(user_prefs: Dict, song: Dict) -> float:
     valence_target = MOOD_VALENCE.get(user_prefs["mood"], 0.5)
     valence_sim = 1 - abs(song["valence"] - valence_target)
     mood_score = 0.7 * mood_match + 0.3 * valence_sim
+    # DEBUGGING: print(f" Mood match: {mood_match}, Valence sim: {valence_sim:.2f}, Mood score: {mood_score}")
 
     # energy: composite of energy + normalized tempo + danceability (weight 0.25)
     norm_tempo = (song["tempo_bpm"] - 60) / 92

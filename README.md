@@ -16,18 +16,7 @@ Replace this paragraph with your own summary of what your version does.
 ---
 
 ## How The System Works
-
-Explain your design in plain language.
-
-Some prompts to answer:
-
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
-
-My implementation of the Music Recommender is a content-based recommendation system that uses song attributes to select the best songs that fit the user's preferences. the `UserProfile` will contain teh attributes:
+My implementation of the Music Recommender is a content-based recommendation system that uses song attributes to select the best songs that fit the user's preferences. the `UserProfile` will contain the attributes:
  - favorite_genre
  - favorite_mood
  - target_energy
@@ -43,6 +32,7 @@ The scoring system uses these attributes to score:
 - valence: positivity of a song
 - danceability: suitablity of a song to be danced to
 - acousticness: measure of how much unplugged, natural sound is used
+
 The Scoring algorithm calculates a genre, mood, energy, and acoustic score and multiplied by fixed weights based on how I think songs should be scored.
 
 ```python
@@ -52,11 +42,13 @@ score = 0.40 * genre_score
       + 0.10 * acoustic_score
 ```
 
+
 The genre score is a binary match, meaning that it will only be considered if it matches the user's preferred genre.
 
 ```python
 genre_score = 1 if song.genre == user.favorite_genre else 0
 ```
+
 
 The mood score is a composite feature based on a binary mood match and a valence similarity sub-feature. The mood-valence mapping is also a fixed number based on what I intuitively think it correlates to(higher valence = happier mood)
 
@@ -72,6 +64,7 @@ mood_score       = 0.7 * mood_match + 0.3 * valence_sim
 energy_score — composite
 ```
 
+
 The energy score is based on energy similarity, which is a composite feature utilizing a normalized tempo/bpm and song danceability metrics. To keep it simple, the tempo/bpm was normalized by subtracting the lowest bpm in the dataset (60 bpm) from the song's bpm, and dividing it by the difference between the highest (152 bpm) and lowest bpm. 
 
 ```python
@@ -79,6 +72,7 @@ norm_tempo       = (song.tempo_bpm - 60) / 92   # normalizes to [0, 1] for datas
 composite_energy = 0.5 * song.energy + 0.3 * norm_tempo + 0.2 * song.danceability
 energy_score     = 1 - abs(composite_energy - user.target_energy)
 ```
+
 
 The acoustic score is based on binary range check that reads a boolean that determines whether the song fits the acoustic preference.
 
@@ -97,8 +91,26 @@ acoustic_score = 1 if (song.acousticness >= 0.5) == user.likes_acoustic or else 
 
 **Output:** All songs are sorted descending by their final score and the top `k` are returned, each with a score and a plain-language explanation.
 
+### Expected Output
+
+**Primary User Profile** — `genre: pop, mood: relaxed, energy: 0.71, likes_acoustic: True`
+
+![Example output in terminal](terminal_output.png)
+
+**Energy Paradox Profile** — `genre: lofi, mood: chill, energy: 0.0, likes_acoustic: True`
+
+![Energy Paradox output in terminal](energy_paradox_output.png)
+
+**Genre Intruder Profile** — `genre: synthwave, mood: chill, energy: 0.40, likes_acoustic: True`
+
+![Genre Intruder output in terminal](genre_intruder_output.png)
+
+**Valence Trap Profile** — `genre: jazz, mood: happy, energy: 0.40, likes_acoustic: True`
+
+![Valence Trap output in terminal](valence_trap_output.png)
+
 ### Potential Biases
-The Scoring Rule, puts a heavy bias toward genre since its people don't often listen outside of their preferred genre of music. However, if the listener listens to a lot of different music and  preferences, the recommendation system would not be robust enough to take those many preferences into consideration. The same goes into mood as well, but with slightly less effect.
+The Scoring Rule, puts a heavy bias toward genre since people don't often listen outside out of their preferred genre of music. However, if the listener listens to a lot of different music and varying preferences, the recommendation system would not be robust enough to take those into consideration. The same goes for mood as well, but with slightly less effect.
 
 ---
 
@@ -139,11 +151,11 @@ You can add more tests in `tests/test_recommender.py`.
 
 ## Experiments You Tried
 
-Use this section to document the experiments you ran. For example:
+When I was testing a user profile (Genre Intruder) designed to check if genre score overpowers the mood, energy, and acoustic scores, I noticed that the "Night Drive Loop" and "Neon Freeway" was beating out all other recommendations solely on the fact that they were genre matches.
+So in my experiment, I balanced out the weights so that genre/mood/energy/acoustic split was 30/30/30/10 instead of 40/25/25/10. After testing it, "Night Drive Loop" and "Neon Freeway" were no longer ranked, meaning the genre bias was removed or at least decreased.
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+When I was testing a user profile (Valence Trap) designed to check if valence score could inflate mood scores. I wanted to see what happen if valence_similarity had more influence.
+When I tweaked the mood_match and valence_similarity weights to 0.5, the top three recommendations remained the same since it matched genre, energy, and acoustic preference; however, the last two changed. In the previous run, the last two were selected due to mood match, but in the new run, the reason was based more on energy and acousticness. The mood match had less affect on the overall mood score. 
 
 ---
 
